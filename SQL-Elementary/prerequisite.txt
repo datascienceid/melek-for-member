@@ -1,0 +1,21 @@
+SQL Class
+
+1. Instal Postgre. Buka link berikut
+https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+catatan: Pilih operating system yang sesuai dengan PC/Laptop yang digunakan saat ini.
+
+2. Install dbeaver. Buka pada link berikut
+https://dbeaver.jkiss.org/download/
+catatan: Pilih operating system yang sesuai dengan PC/Laptop yang digunakan saat ini.
+
+3. Download database NorfolkDataSci. Buka pada link berikut
+https://github.com/NorfolkDataSci/adventure-works-postgres
+
+4. Deskripsi database Adventureworks. Buka pada link berikut
+https://technet.microsoft.com/en-us/library/ms124623(v=sql.105).aspx
+
+5. Book
+https://drive.google.com/file/d/1aWBmT2jh-mb9cSln_2ppRvpzkDy7iPVt/view
+
+6. how to install
+http://bit.ly/melekSQLwoy
