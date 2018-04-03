@@ -1,0 +1,23 @@
+from random import randint
+rand = randint(1,20)
+i = 0
+print "Hai! Siapa namamu?"
+nama = raw_input(">> ")
+print "Nah, %s, Sekarang saya memikirkan angka \
+dari 1 sampai 20." %(nama)
+print "Ayo tebak!"
+tebakan = input(">> ")
+i = i+1
+while tebakan != rand:
+  if tebakan < rand:
+    print "Tebakanmu terlalu kecil. "
+    print "Ayo tebak lagi!"
+    tebakan = input(">> ")
+    i = i+1
+  else :
+    print "Tebakanmu terlalu besar. "
+    print "Ayo tebak lagi!"
+    tebakan = input(">> ")
+    i = i+1
+print "Bagus, %s! Kamu bisa menebak \
+angkaku dalam %d kali tebakan!" %(nama,i)

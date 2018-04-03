@@ -1,0 +1,23 @@
+from random import randint
+rand = randint(1,20)
+i = 0
+print "Hello! What is your name?"
+name = raw_input(">> ")
+print "Well, %s, I am thinking of a number \
+between 1 and 20." %(name)
+print "Take a guess."
+guess = input(">> ")
+i = i+1
+while guess != rand:
+  if guess < rand:
+    print "Your guess is too low. "
+    print "Take a guess."
+    guess = input(">> ")
+    i = i+1
+  else :
+    print "Your guess is too high. "
+    print "Take a guess."
+    guess = input(">> ")
+    i = i+1
+print "Good job, %s! You guessed \
+my number in %d guesses!" %(name,i)

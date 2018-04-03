@@ -1,0 +1,6 @@
+print "What's your name?"
+name = raw_input("> ")
+print "What year were you born?"
+birthyear = int(raw_input("> "))
+print "Hi %s!" %(name) 
+print "You are %d years old!" %(2015 - birthyear)
