@@ -1,0 +1,413 @@
+---
+title: "Introduction to Data Analysis in R (1)"
+author: "Irwan Rizadi"
+date: "April 25, 2018"
+output:
+  slidy_presentation: default
+  pdf_document: default
+---
+# R and I
+
+## Education Background
+S1 Statistics - UGM 
+<br/>
+(2009 is first time know R in Computational Statistics Course)
+
+<br/>
+S2 Applied Statistics - King Fahd University of Petroleum & Minerals
+<br/>
+(Also take R course by lecturer who is very close to founder of R, Ross Ihaka in Auckland University)
+
+## Working Now
+Data Scientist at PT. Astra International
+<br/>
+(Using R and some time also other tools)
+
+#Content
+## (1) Data Understanding
+## (2) Data Normalization
+## (3) Data Scrubbing
+## (4) Handling Missing Value
+## (5) Data Sampling
+## (6) Dimensionality Reduction (PCA)
+## (7) Data Binning
+
+
+#Data Understanding
+Before doin some data analysis, we have to understand what kind of data we are going to analyze. Lets take an example of exploring dataset "iris".
+```{r iris}
+head(iris)
+tail(iris)
+dim(iris)
+```
+
+##Understanding Structure of Data
+```{r}
+str(iris)
+
+iris$Species <- as.character(iris$Species)
+str(iris)
+
+iris$Species <- as.factor(iris$Species)
+str(iris)
+```
+
+## Scatter plot of data
+```{r}
+pairs(iris)
+```
+
+##Correlation of Numeric variable
+```{r}
+cor(iris$Sepal.Length,iris$Petal.Length, method = "spearman")
+cor(iris$Sepal.Length,iris$Petal.Length, method = "pearson")
+cor(iris$Sepal.Length,iris$Petal.Length, method = "kendal")
+```
+
+##Correlation of Categorical Variable
+AOV : Fit an Analysis of Variance Model
+<br/>
+Function:
+<br/>
+aov(formula, data = NULL, projections = FALSE, qr = TRUE,
+    contrasts = NULL, .)
+```{r}
+aov1 <- aov(iris$Sepal.Width~ iris$Species, data = iris)
+summary(aov1)
+```
+
+# Data Normalization
+If data of different scales are being employed by the user, it is recommended to perform a normalization to make the data structures comparable. This is performed by the Normalization function.
+
+## Function
+Normalization(Data,method=c("Quantile","Fisher-Yates","Standardize",
+                            "Range","Q","q","F","f","S","s","R","r"))
+
+
+```{r warning=FALSE}
+library(IntClust)
+set.seed(1234)
+x=matrix(rnorm(100),ncol=10,nrow=10)
+Norm_R=Normalization(x,method="R")
+head(Norm_R)
+
+Norm_Quantile=Normalization(x,method="Quantile")
+head(Norm_Quantile)
+```
+Try for another method by using library "clusterSim".
+<br/>
+For Normalization data, we can use function from package "clusterSim"
+data.
+<br/>
+Normalization (x,type="n0",normalization="column"); where type is from n0-n13
+<br/>
+n0 - without normalization
+<br/>
+n1 - standardization ((x-mean)/sd)
+
+```{r message=FALSE, warning=FALSE}
+library(clusterSim)
+data(data_ratio)
+```
+
+```{r}
+head(data_ratio)
+str(data_ratio)
+```
+
+```{r}
+z1 <- data.Normalization(data_ratio,type="n1",normalization="column")
+head(z1)
+```
+
+```{r}
+z2 <- data.Normalization(data_ratio,type="n10",normalization="row")
+head(z2)
+```
+
+#Data Scrubbing
+  A Utility For Basic Data Cleaning and Recoding. Changes Values Outside Of Minimum And Maximum Limits To NA. 
+<br/>
+
+  Atedious part of data analysis is addressing the problem of miscoded data that need to be converted to NA or some other value. For a given data.frame or matrix, scrub will set all values of columns from=from to to=to that are less than a set (vector) of min values or more than a vector of max values to NA. Can also be used to do basic recoding of data for all values=isvalue to newvalue.
+<br/>
+
+  The length of the where, isvalue, and newvalues must either match, or be 1
+## Function
+scrub(x, where, min, max,isvalue,newvalue)
+```{r warning=FALSE}
+library(psych)
+```
+
+make all occurrences of 55 NA
+```{r}
+data(attitude)
+attitude
+x <- scrub(attitude,isvalue=55)
+x
+```
+
+will just do it for the 4th column
+```{r}
+x1 <- scrub(attitude, where=c(4,4,4), isvalue =c(30,40,50), 
+            newvalue = c(930,940,950)) 
+x1
+```
+
+
+get rid of a complicated set of cases and replace with missing values
+
+```{r}
+y <- scrub(attitude,where=2:4,min=c(20,30,40),max= c(120,110,100),
+           isvalue= c(32,43,54))
+y
+```
+
+change a column by name
+```{r}
+y1 <- scrub(attitude,where="learning",isvalue=55,newvalue=999)
+y1
+```
+
+change a column by name
+```{r}
+y2 <- scrub(attitude,where="learning",min=45,newvalue=999)
+y2
+```
+
+change a column by name look for multiple values in that column
+```{r}
+y3 <- scrub(attitude,where="learning",isvalue=c(45,48),
+            newvalue=999)
+y3
+```
+
+change values in one column to one of two different things
+```{r}
+y4 <- scrub(attitude,where="learning",isvalue=c(45,48),
+            newvalue= c(999,-999)) 
+y4
+```
+
+
+# Handling Missing Value
+Check Missing Value
+```{r}
+y <- c(1,2,3,NA)
+is.na(y)
+```
+
+Excluding NA from analysis
+```{r}
+mean(y) # returns NA
+mean(y, na.rm=TRUE)
+```
+
+## Filling Missing Value
+The fill.missing function will fill the missing values within a data.frame with the values imputed  with "best guess" expected values of transformed variables, back transformed to the original scale.
+<br/>
+Function:
+<br/>
+fill.missing(x, seed = 101, simplify = TRUE, idcol = "id", ...)
+
+
+```{r warning=FALSE}
+library(nbpMatching)
+set.seed(1)
+df <- data.frame(id=LETTERS[1:25], val1=rnorm(25), val2=rnorm(25))
+df[sample(seq_len(nrow(df)), ceiling(nrow(df)*0.1)), 2] <- NA
+df
+df <- fill.missing(df)
+df
+```
+
+## Other Example
+
+```{r}
+data("airquality")
+head(airquality, 3)
+```
+
+
+
+### Explore Missing Value
+```{r warning=FALSE}
+library(mice)
+md.pattern(airquality)
+```
+From the output, we can see that 111 row completed, 35 missing in ozone and 5 missing in solar.
+
+### Visualization of missing value
+```{r warning=FALSE}
+library(colorspace)
+library(grid)
+library(data.table)
+library(VIM)
+aggr_plot <- aggr(airquality, col=c('navyblue','red'), numbers=TRUE, sortVars=TRUE, labels=names(airquality), cex.axis=.7,gap=3, ylab=c("Histogram of missing data","Pattern"))
+
+```
+From the output, navyblue is not missing and red is missing
+
+### Imputing Missing value 
+<br/>
+Function:
+<br/>
+mice(data, m = 5, method = vector("character", length = ncol(data)),
+  predictorMatrix = (1 - diag(1, ncol(data))), where = is.na(data),
+  visitSequence = NULL, form = vector("character", length = ncol(data)),
+  post = vector("character", length = ncol(data)), defaultMethod = c("pmm",
+  "logreg", "polyreg", "polr"), maxit = 5, diagnostics = TRUE,
+  printFlag = TRUE, seed = NA, imputationMethod = NULL,
+  defaultImputationMethod = NULL, data.init = NULL, ...)
+  
+<br/>  
+We can use method PMM : predictive mean matching in mice package. PMM use numeric data.
+<br/>
+Logreg, logistic regression imputation (binary data, factor with 2 levels)
+<br/>
+polyreg,polytomous regression imputation for unordered categorical data(factor >= 2 levels)
+<br/>
+polr, proportional odds model for (ordered, >= 2 levels) 
+
+```{r}
+tempData <- mice(airquality,m=5,maxit=50,meth='pmm',seed=500)
+```
+```{r}
+summary(tempData)
+```
+
+Data Imputed
+```{r}
+completedData <- complete(tempData,1)
+```
+
+
+Recheck missing value
+```{r}
+aggr_plot2 <- aggr(completedData, col=c('navyblue','red'), numbers=TRUE,
+                   sortVars=TRUE, labels=names(completedData), 
+                   cex.axis=.7, gap=3, 
+                   ylab=c("Histogram of missing data","Pattern"))
+
+```
+
+# Data Sampling
+Define Mean, Standard Deviation, and size of sample we will collect from the population
+```{r}
+popMean = 100
+popSD = 15
+sampSize = 30
+```
+Create Population Data size 1 Million
+```{r}
+population <- rnorm(1000000, mean = popMean, sd = popSD)
+hist(population)
+```
+
+Mean and Standard Deviation of Population
+```{r}
+mean(population)
+sd(population)
+```
+
+Sample mean are unbiased estimator of population mean. 
+<br/>
+Create 30 Sample using simple random sampling with replacement
+
+```{r}
+sampDist <- replicate(10000,mean(sample(population, sampSize, replace=TRUE)))
+mean(sampDist)
+
+sdDist_2 <- replicate(10000,sd(sample(population, sampSize, replace=TRUE)))
+mean(sdDist_2)
+
+```
+
+Take 75% and 25% of sample from dataset
+```{r}
+data(mtcars)
+#
+set.seed(123)
+smp_size <- floor(0.75 * nrow(mtcars))
+mtcars_75 <- sample(seq_len(nrow(mtcars)), size = smp_size)
+mtcars[mtcars_75,]
+mtcars[-mtcars_75,]
+```
+
+#PCA (Dimensional Reduction)
+Dimension reduction is the process of reducing the number of random variables under consideration by obtaining a set of principal variables.
+<br/>
+
+Load Library
+```{r echo=TRUE, warning=FALSE}
+library(lattice)
+library(ggplot2)
+library(caret)
+library(e1071)
+```
+
+Load Data
+```{r}
+data("iris")
+head(iris,3)
+```
+PCA Function
+```{r}
+trans <- preProcess(iris[,1:4], 
+                   method=c("BoxCox", "center", 
+                            "scale", "pca"))
+```
+
+Hasil pca
+```{r}
+PC <- predict(trans, iris[,1:4])
+head(PC,3)
+```
+
+# Data Binning
+"Discretizes all numerical data in a data frame into categorical bins of equal length or content or based on automatically determined clusters"
+
+## Function
+"bin(data, nbins = 5, labels = NULL, method = c("length", "content",
+"clusters"), na.omit = TRUE)"
+<br/>
+
+When "na.omit = FALSE" an additional level "NA" is added to each factor with missing values.
+
+<br/>
+Create data that containing NA
+```{r warning=FALSE}
+library(OneR)
+```
+
+##Difference between methods "length", "content", and "clusters"
+### Method "length"
+```{r}
+data(faithful)
+head(faithful)
+table(bin(faithful$waiting, nbins = 3, method = "length"))
+
+```
+
+### Method "content"
+```{r}
+table(bin(faithful$waiting, nbins = 3, method = "content"))
+
+```
+
+### Method "clusters"
+```{r}
+table(bin(faithful$waiting, nbins = 3, method = "clusters"))
+
+```
+
+
+# Question?
+
+## QUIZ data analysis using data camera.csv
+
+```{r eval=FALSE, include=FALSE}
+data <- read.csv("D:/Data Science Indonesia/Intro to Data Analysis in R 1/camera.csv", sep = ";")
+head(data)
+```
+
