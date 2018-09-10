@@ -1,17 +1,19 @@
 # Melek for Member
 
-Repo untuk materi materi yang diajarkan dikelas MFM
+This repository contain supplementary materials for previous Melek for Member (MFM) session. 
 
--	MFM_Linear Algebra
--	MFM_Statistic 1
--	MFM_Statistic 2
--	MFM_SQL Elementary
--	MFM_Python 1
--	MFM_Python 2
--	MFM_R1
--	MFM_R2
--	MFM_Intro to Data Analysis 1 R
--	MFM_Intro to Data Analysis 1 Python
--	MFM_Intro to Data Analysis 2 R
--	MFM_Intro to Data Analysis 2 Python
--	MFM_Regression Analysis Theory
+* [Linear Algebra](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
+* [Statistic 1]()
+* [Statistic 2]()
+* [SQL Elementary]()
+* [Introduction to Python Programming (1)]()
+* [Introduction to Python Programming (2)]()
+* [Introduction to R Programming (1)]()
+* [Introduction to R Programming (2)]()
+* [Introduction to Data Analysis Python (1)]()
+* [Introduction to Data Analysis  R (1)]()
+* [Introduction to Data Analysis Python (2)]()
+* [Introduction to Data Analysis  R (2)]()
+* [Regression Analysis Theory]()
+* [Data Visualization]()
+* [Introduction to Machine Learning]()
